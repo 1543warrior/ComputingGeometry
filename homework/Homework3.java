@@ -1,7 +1,5 @@
 package homework;
 
-import geom.Segment;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -10,8 +8,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 /**
  * Created with IntelliJ IDEA.
@@ -52,7 +48,7 @@ public class Homework3 extends JFrame {
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setResizable(false);
         this.setBounds(DEFAULT_POSITION_X, DEFAULT_POSITION_Y, DEFAULT_WIDTH, DEFAULT_HEIGHT);
-        this.setTitle("Вычгеом. Задание 2");
+        this.setTitle("Вычгеом. Задание 3. Обход по Джарвису");
 
         label1 = new JLabel();
         label1.setBorder(BorderFactory.createLineBorder(Color.BLACK));
@@ -139,7 +135,7 @@ public class Homework3 extends JFrame {
                 if (mainFrame.points.size() > 2) {
                     mainFrame.createButton.setEnabled(false);
                     mainFrame.clearButton.setEnabled(false);
-                    mainFrame.grahamScan();
+                    mainFrame.jarvisMarch();
                     mainFrame.createButton.setEnabled(true);
                     mainFrame.clearButton.setEnabled(true);
                 } else {
@@ -150,65 +146,41 @@ public class Homework3 extends JFrame {
     }
 
     ArrayList<geom.Point> choice = new ArrayList<geom.Point>();
-    //ArrayList<geom.Point> pointsCopy = new ArrayList<geom.Point>();
+    ArrayList<geom.Point> pointCopy = new ArrayList<geom.Point>();
 
-    public void grahamScan() {
+    public void jarvisMarch() {
         choice = new ArrayList<geom.Point>();
         geom.Point startPoint;
         startPoint = points.get(startingPoint());
-        points.remove(startingPoint());
-        sort(startPoint);
-        points.add(0, startPoint);
-        graphics.setColor(Color.GREEN);
-        for (int i = 1; i < points.size(); i ++) {
-            drawLine(2, i);
-            label1.update(label1.getGraphics());
-        }
 
-        ArrayList<geom.Point> uniquePoints = new ArrayList<geom.Point>();
-        for (geom.Point point : points) {
-            uniquePoints.add(point);
-        }
-        int index = 2;
-        while (index < uniquePoints.size()) {
-            if (geom.Point.direction(uniquePoints.get(0), uniquePoints.get(index - 1), uniquePoints.get(index)) == 0) {
-                if ((new Segment(uniquePoints.get(0), uniquePoints.get(index))).getSize() >
-                        (new Segment(uniquePoints.get(0), uniquePoints.get(index - 1))).getSize()) {
-                    uniquePoints.remove(index - 1);
-                } else {
-                    uniquePoints.remove(index);
-                }
-            } else {
-                index ++;
-            }
-        }
-
-        choice.add(uniquePoints.get(0));
-        choice.add(uniquePoints.get(1));
+        choice.add(startPoint);
+        points.remove(startPoint);
+        points.add(startPoint);
+        int lastIncluded;
         repaintImage();
-        graphics.setColor(Color.RED);
-        for (int i = 2; i < uniquePoints.size(); i++) {
-            while (geom.Point.direction(choice.get(choice.size() - 2), choice.get(choice.size() - 1),
-                    uniquePoints.get(i)) == -1) {
-                choice.remove(choice.size() - 1);
-                repaintImage();
-                graphics.setColor(Color.RED);
-                drawLine(1, 0);
-            }
-            choice.add(uniquePoints.get(i));
-            drawLine(1, 0);
-            label1.update(label1.getGraphics());
-        }
-        drawLine(3, 0);
-    }
 
-    public void sort(final geom.Point p) {
-        Collections.sort(points, new Comparator<geom.Point>() {
-            @Override
-            public int compare(geom.Point p2, geom.Point p1) {
-                return geom.Point.direction(p, p1, p2);
+        for (geom.Point point : points) {
+            pointCopy.add(point);
+        }
+
+        while (true) {
+            lastIncluded = 0;
+            for (int i = 1; i < pointCopy.size(); i ++) {
+                if (geom.Point.direction(choice.get(choice.size()-1), pointCopy.get(lastIncluded), pointCopy.get(i)) == -1) {
+                    lastIncluded = i;
+                }
             }
-        });
+            if (pointCopy.get(lastIncluded) == choice.get(0)) {
+                break;
+            } else {
+                choice.add(pointCopy.get(lastIncluded));
+                graphics.setColor(Color.RED);
+                drawLine(1);
+                label1.update(label1.getGraphics());
+                pointCopy.remove(lastIncluded);
+            }
+        }
+        drawLine(2);
     }
 
     public void repaintImage() {
@@ -241,7 +213,7 @@ public class Homework3 extends JFrame {
         return resultIndex;
     }
 
-    public synchronized void drawLine(int type, final int index) {
+    public synchronized void drawLine(int type) {
         Thread newThread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -252,19 +224,14 @@ public class Homework3 extends JFrame {
             try {
                 switch (type) {
                     case 1:
-                        newThread.sleep(500);
+                        newThread.sleep(200);
                         for (int i = 1; i < choice.size(); i ++) {
                             graphics.drawLine(choice.get(i - 1).getX(), choice.get(i - 1).getY(),
                                     choice.get(i).getX(), choice.get(i).getY());
                         }
                         break;
                     case 2:
-                        newThread.sleep(100);
-                        graphics.drawLine(points.get(0).getX(), points.get(0).getY(),
-                                points.get(index).getX(), points.get(index).getY());
-                        break;
-                    case 3:
-                        newThread.sleep(500);
+                        newThread.sleep(200);
                         graphics.drawLine(choice.get(choice.size() - 1).getX(), choice.get(choice.size() - 1).getY(),
                                 choice.get(0).getX(), choice.get(0).getY());
                 }

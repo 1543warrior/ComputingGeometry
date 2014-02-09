@@ -71,11 +71,4 @@ public class Segment {
         }
         return false;
     }
-
-
-
-    public static int vectors(Segment v1, Segment v2) {
-        return (v1.point2.getX() - v1.point1.getX()) * (v2.point2.getY() - v2.point1.getY()) -
-                (v1.point2.getY() - v1.point1.getY()) * (v2.point2.getX() - v2.point1.getX());
-    }
 }

@@ -145,7 +145,7 @@ public class Homework3 extends JFrame {
         });
     }
 
-    ArrayList<geom.Point> choice = new ArrayList<geom.Point>();
+    ArrayList<geom.Point> choice;
     ArrayList<geom.Point> pointCopy = new ArrayList<geom.Point>();
 
     public void jarvisMarch() {
@@ -181,6 +181,7 @@ public class Homework3 extends JFrame {
             }
         }
         drawLine(2);
+        pointCopy.clear();
     }
 
     public void repaintImage() {

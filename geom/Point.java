@@ -2,7 +2,7 @@ package geom;
 
 /**
  * Created with IntelliJ IDEA.
- * User: -
+ * User: Lyange Dmitriy
  * Date: 04.02.14
  * Time: 10:22
  * To change this template use File | Settings | File Templates.

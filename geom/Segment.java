@@ -32,7 +32,7 @@ public class Segment {
         this.point2 = new Point(point2.getX(), point2.getY());
     }
 
-    public double getSize() {
+    public double getLength() {
         return Math.sqrt(Math.pow(point1.getX() - point2.getX(), 2) + Math.pow(point1.getY() - point2.getY(), 2));
     }
 

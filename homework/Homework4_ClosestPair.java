@@ -141,7 +141,7 @@ public class Homework4_ClosestPair extends JFrame {
         mainFrame.createButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (points.size() > 2) {
+                if (points.size() > 1) {
                     mainFrame.createButton.setEnabled(false);
                     mainFrame.clearButton.setEnabled(false);
 
@@ -159,8 +159,7 @@ public class Homework4_ClosestPair extends JFrame {
                             return Double.compare(o1.getY(), o2.getY());
                         }
                     });
-                    ArrayList<Point> auxiliary = new ArrayList<Point>((points.size() * 3) / 2 + 1);        //
-                    Segment shortest = mainFrame.closestPair(xPoints, yPoints, auxiliary, 0, points.size() - 1);
+                    Segment shortest = mainFrame.closestPair(xPoints, yPoints, 0, points.size() - 1);
                     xPoints.clear();
                     yPoints.clear();
                     mainFrame.drawLine(shortest);
@@ -169,14 +168,13 @@ public class Homework4_ClosestPair extends JFrame {
                     mainFrame.createButton.setEnabled(true);
                     mainFrame.clearButton.setEnabled(true);
                 } else {
-                    mainFrame.resultTextArea.setText("Точек\nдолжно\nбыть как\nминимум 3!");
+                    mainFrame.resultTextArea.setText("Точек\nдолжно\nбыть как\nминимум 2!");
                 }
             }
         });
     }
 
-    public Segment closestPair(ArrayList<Point> xPoints, ArrayList<Point> yPoints, ArrayList<Point> auxiliary,
-                               int leftBound, int rightBound) {
+    public Segment closestPair(ArrayList<Point> xPoints, ArrayList<Point> yPoints, int leftBound, int rightBound) {
         if (leftBound >= rightBound) {
             return null;
         }
@@ -187,9 +185,11 @@ public class Homework4_ClosestPair extends JFrame {
         int middle = leftBound + (rightBound - leftBound) / 2;
         Point middlePoint = xPoints.get(middle);
 
-        Segment leftShortest = closestPair(xPoints, yPoints, auxiliary, leftBound, middle);
-        Segment rightShortest = closestPair(xPoints, yPoints, auxiliary, middle + 1, rightBound);
+        Segment leftShortest = closestPair(xPoints, yPoints, leftBound, middle);
+        Segment rightShortest = closestPair(xPoints, yPoints, middle + 1, rightBound);
         Segment shortest = null;
+        ArrayList<Point> auxiliary = new ArrayList<Point>(((rightBound - leftBound) * 3) / 2 + 1);
+
         if (leftShortest != null && rightShortest != null) {
             shortest = leftShortest.getLength() < rightShortest.getLength() ? leftShortest : rightShortest;
         } else {
@@ -200,16 +200,16 @@ public class Homework4_ClosestPair extends JFrame {
                 shortest = rightShortest;
             }
         }
+
         if (shortest != null) {
-            int currentIndex = 0;
-            for (int i = leftBound; i <= rightBound; i ++) {
+            for (int i = 0; i < xPoints.size(); i ++) {
                 if ((Math.abs(yPoints.get(i).getX() - middlePoint.getX())) < shortest.getLength()) {
-                    auxiliary.add(currentIndex ++, yPoints.get(i));
+                    auxiliary.add(yPoints.get(i));
                 }
             }
 
-            for (int i = 0; i < currentIndex; i ++) {
-                for (int j = i + 1; (j < currentIndex) && (auxiliary.get(j).getY() - auxiliary.get(i).getY() <
+            for (int i = 0; i < auxiliary.size(); i ++) {
+                for (int j = i + 1; (j < auxiliary.size()) && (auxiliary.get(j).getY() - auxiliary.get(i).getY() <
                         shortest.getLength()); j ++) {
                     Segment currentSegment = new Segment(auxiliary.get(i), auxiliary.get(j));
                     if (currentSegment.getLength() < shortest.getLength()) {

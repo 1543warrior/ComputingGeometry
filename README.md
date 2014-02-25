@@ -1,4 +1,4 @@
 ComputingGeometry
 =================
 
-HSE Computing Geometry Course
+HSE Computational Geometry Course

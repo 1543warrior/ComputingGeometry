@@ -10,6 +10,8 @@ package geom;
 public class Point {
     private int x;
     private int y;
+    private Segment segment; // only for points-parts of segment
+    private boolean isLeft; // only for points-parts of segment
 
     public Point(int x, int y) {
         this.x = x;
@@ -30,6 +32,22 @@ public class Point {
 
     public void setY(int y) {
         this.y = y;
+    }
+
+    public Segment getSegment() {
+        return segment;
+    }
+
+    public void setSegment(Segment segment) {
+        this.segment = segment;
+    }
+
+    public boolean getIsLeft() {
+        return isLeft;
+    }
+
+    public void setIsLeft(boolean isLeft) {
+        this.isLeft = isLeft;
     }
 
     public static int direction(Point a, Point b, Point c) {

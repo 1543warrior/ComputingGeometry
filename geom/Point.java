@@ -42,11 +42,11 @@ public class Point {
         this.segment = segment;
     }
 
-    public boolean getIsLeft() {
+    public boolean isLeft() {
         return isLeft;
     }
 
-    public void setIsLeft(boolean isLeft) {
+    public void isLeft(boolean isLeft) {
         this.isLeft = isLeft;
     }
 

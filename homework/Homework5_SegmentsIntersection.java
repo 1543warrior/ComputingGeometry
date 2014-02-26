@@ -114,26 +114,23 @@ public class Homework5_SegmentsIntersection extends JFrame {
                         mainFrame.isSecondPointInSegment = true;
                     } else {
                         points.add(new Point(e.getX(), e.getY()));
-                        if (points.get(points.size() - 2).getX() < points.get(points.size() - 1).getX()) {
-                            points.get(points.size() - 2).setIsLeft(true);
-                            points.get(points.size() - 1).setIsLeft(false);
+                        if (points.get(points.size() - 2).getX() != points.get(points.size() - 1).getX()) {
                             Segment segment = new Segment(points.get(points.size() - 2), points.get(points.size() - 1));
                             points.get(points.size() - 2).setSegment(segment);
                             points.get(points.size() - 1).setSegment(segment);
-                            mainFrame.drawLine(points.get(points.size() - 2), points.get(points.size() - 1));
+                            mainFrame.drawLine(new Segment(points.get(points.size() - 2), points.get(points.size() - 1))
+                                    , Color.RED);
                             mainFrame.label1.update(mainFrame.label1.getGraphics());
                             mainFrame.isSecondPointInSegment = false;
                             mainFrame.resultTextArea.setText("");
-                        } else if (points.get(points.size() - 2).getX() > points.get(points.size() - 1).getX()) {
-                            points.get(points.size() - 2).setIsLeft(false);
-                            points.get(points.size() - 1).setIsLeft(true);
-                            Segment segment = new Segment(points.get(points.size() - 2), points.get(points.size() - 1));
-                            points.get(points.size() - 2).setSegment(segment);
-                            points.get(points.size() - 1).setSegment(segment);
-                            mainFrame.drawLine(points.get(points.size() - 2), points.get(points.size() - 1));
-                            mainFrame.label1.update(mainFrame.label1.getGraphics());
-                            mainFrame.isSecondPointInSegment = false;
-                            mainFrame.resultTextArea.setText("");
+                            if (points.get(points.size() - 2).getX() < points.get(points.size() - 1).getX()) {
+                                points.get(points.size() - 2).isLeft(true);
+                                points.get(points.size() - 1).isLeft(false);
+
+                            } else if (points.get(points.size() - 2).getX() > points.get(points.size() - 1).getX()) {
+                                points.get(points.size() - 2).isLeft(false);
+                                points.get(points.size() - 1).isLeft(true);
+                            }
                         } else {
                             mainFrame.resultTextArea.setText("Отрезок\nне может\nбыть вер-\nтикальным!");
                             points.remove(points.size() - 1);
@@ -161,6 +158,7 @@ public class Homework5_SegmentsIntersection extends JFrame {
                 mainFrame.label1.repaint();
                 points.clear();
                 mainFrame.resultTextArea.setText("");
+                mainFrame.createButton.setEnabled(true);
             }
         });
 
@@ -177,7 +175,6 @@ public class Homework5_SegmentsIntersection extends JFrame {
                         mainFrame.resultTextArea.setText("NO!");
                     }
 
-                    mainFrame.createButton.setEnabled(true);
                     mainFrame.clearButton.setEnabled(true);
                 } else {
                     mainFrame.resultTextArea.setText("Точек\nдолжно\nбыть\nкратно 2!");
@@ -186,74 +183,41 @@ public class Homework5_SegmentsIntersection extends JFrame {
         });
     }
 
-    /*public static boolean isCrossed(ArrayList<Point> xArray) {
-        ArrayList<Segment> allSegments = new ArrayList<Segment>();
-
-        sortByX(xArray);
-
-        for (Point p : xArray) {
-            if (p.getIsLeft()) {
-                insert(allSegments, p.getSegment());
-                if ((above(allSegments, p.getSegment()) != null && above(allSegments, p.getSegment()).segmentIntersect
-                        (p.getSegment())) || (below(allSegments, p.getSegment()) != null && below(allSegments,
-                        p.getSegment()).segmentIntersect(p.getSegment()))) {
-                    return true;
-                }
-            } else {
-                if (above(allSegments, p.getSegment()) != null &&
-                        below(allSegments, p.getSegment()) != null &&
-                        above(allSegments, p.getSegment()).segmentIntersect(below(allSegments, p.getSegment()))) {
-                    return true;
-                }
-                delete(allSegments, p.getSegment());
-            }
-        }
-        return false;
-    }  */
-
-    public static boolean isCrossed(ArrayList<Point> xArray) {
+    public static boolean isCrossed(ArrayList<Point> points) {
         ArrayList<Segment> tLines = new ArrayList<Segment>();
 
-        sortByX(xArray);
+        sort(points);
 
-        for (Point p : xArray) {
-            if (p.getIsLeft()) {
+        for (Point p : points) {
+            if (p.isLeft()) {
                 insert(tLines, p.getSegment());
-                mainFrame.drawB(p.getSegment(), Color.BLACK);
+                sortLines(tLines, p.getX());
+                mainFrame.drawLine(p.getSegment(), Color.BLACK);
                 mainFrame.label1.update(mainFrame.label1.getGraphics());
 
-                //System.out.println(above(tLines, p.getSegment()));
-                //System.out.println(p.getSegment());
-                //System.out.println(below(tLines, p.getSegment()));
-
-                if ((above(tLines, p.getSegment()) != null && above(tLines, p.getSegment()).segmentIntersect(p.getSegment())) ||
-                        (below(tLines, p.getSegment()) != null && below(tLines, p.getSegment()).segmentIntersect(p.getSegment()))) {
-
-                    if (above(tLines, p.getSegment()).segmentIntersect(p.getSegment())) {
-                        mainFrame.drawB(above(tLines, p.getSegment()), Color.CYAN);
-                        mainFrame.drawB(p.getSegment(), Color.CYAN);
+                if ((above(tLines, p.getSegment()) != null && above(tLines, p.getSegment()).segmentIntersect
+                        (p.getSegment())) || (below(tLines, p.getSegment()) != null && below(tLines,
+                        p.getSegment()).segmentIntersect(p.getSegment()))) {
+                    if (above(tLines, p.getSegment()) != null && above(tLines, p.getSegment()).segmentIntersect(p.getSegment())) {
+                        mainFrame.drawLine(above(tLines, p.getSegment()), Color.CYAN);
+                        mainFrame.drawLine(p.getSegment(), Color.CYAN);
                         mainFrame.label1.update(mainFrame.label1.getGraphics());
                     } else {
-                        mainFrame.drawB(below(tLines, p.getSegment()), Color.CYAN);
-                        mainFrame.drawB(p.getSegment(), Color.CYAN);
+                        mainFrame.drawLine(below(tLines, p.getSegment()), Color.CYAN);
+                        mainFrame.drawLine(p.getSegment(), Color.CYAN);
                         mainFrame.label1.update(mainFrame.label1.getGraphics());
                     }
                     return true;
                 }
-            }
-            if (!p.getIsLeft()) {
-                //System.out.println(above(tLines, p.getSegment()));
-                //System.out.println(p.getSegment());
-                //System.out.println(below(tLines, p.getSegment()));
-                if (above(tLines, p.getSegment()) != null &&
-                        below(tLines, p.getSegment()) != null &&
+            } else {
+                if (above(tLines, p.getSegment()) != null && below(tLines, p.getSegment()) != null &&
                         above(tLines, p.getSegment()).segmentIntersect(below(tLines, p.getSegment()))) {
-                    mainFrame.drawB(above(tLines, p.getSegment()), Color.CYAN);
-                    mainFrame.drawB(below(tLines, p.getSegment()), Color.CYAN);
+                    mainFrame.drawLine(above(tLines, p.getSegment()), Color.CYAN);
+                    mainFrame.drawLine(below(tLines, p.getSegment()), Color.CYAN);
                     mainFrame.label1.update(mainFrame.label1.getGraphics());
                     return true;
                 }
-                mainFrame.drawB(p.getSegment(), Color.GREEN);
+                mainFrame.drawLine(p.getSegment(), Color.GREEN);
                 mainFrame.label1.update(mainFrame.label1.getGraphics());
                 delete(tLines, p.getSegment());
             }
@@ -261,18 +225,40 @@ public class Homework5_SegmentsIntersection extends JFrame {
         return false;
     }
 
-    private static void sortByX(ArrayList<Point> xArray) {
-        Collections.sort(xArray, new Comparator<Point>() {
+    private static void sort(ArrayList<Point> Array) {
+        Collections.sort(Array, new Comparator<Point>() {
             @Override
-            public int compare(Point p1, Point p2) {
-                if (p1.getX() > p2.getX()) {
-                    return 1;
-                } else if (p1.getX() < p2.getX()) {
-                    return -1;
-                } else if (p1.getY() < p2.getY()) {
-                    return 1;
+            public int compare(Point point1, Point point2) {
+                if (point1.getX() == point2.getX()) {
+                    if ((point1.isLeft() && point2.isLeft()) || (!point1.isLeft() && !point2.isLeft())) {
+                        return Double.compare(point1.getY(), point2.getY());
+                    } else {
+                        if (point1.isLeft()) {
+                            return -1;
+                        } else {
+                            return 1;
+                        }
+                    }
+                } else {
+                    return Double.compare(point1.getX(), point2.getX());
                 }
-                return -1;
+            }
+        });
+    }
+
+    private static void sortLines(ArrayList<Segment> lines, final double X) {
+        Collections.sort(lines, new Comparator<Segment>() {
+            @Override
+            public int compare(Segment p1, Segment p2) {
+                double y1 = (double) ((p1.getPoint2().getY() - p1.getPoint1().getY()) * X + p1.getPoint2().getX() * p1.getPoint1().getY() -
+                        p1.getPoint1().getX() * p1.getPoint2().getY()) / (p1.getPoint2().getX() - p1.getPoint1().getX());
+                double y2 = (double) ((p2.getPoint2().getY() - p2.getPoint1().getY()) * X + p2.getPoint2().getX() * p2.getPoint1().getY() -
+                        p2.getPoint1().getX() * p2.getPoint2().getY()) / (p2.getPoint2().getX() - p2.getPoint1().getX());
+                if (y1 > y2) {
+                    return 1;
+                } else {
+                    return -1;
+                }
             }
         });
     }
@@ -322,12 +308,7 @@ public class Homework5_SegmentsIntersection extends JFrame {
         }
     }
 
-    public void drawLine(Point point1, Point point2) {
-        graphics.setColor(Color.RED);
-        graphics.drawLine(point1.getX(), point1.getY(), point2.getX(), point2.getY());
-    }
-
-    public synchronized void drawB(Segment l, Color c) {
+    public synchronized void drawLine(Segment l, Color c) {
         try {
             Thread.sleep(200);
 

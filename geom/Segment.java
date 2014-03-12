@@ -71,4 +71,23 @@ public class Segment {
         }
         return false;
     }
+
+    public Point getIntersection(Segment segment) {
+        double x1, y1, x2, y2, x3, y3, x4, y4;
+        int x, y;
+        x1 = this.getPoint1().getX();
+        y1 = this.getPoint1().getY();
+        x2 = this.getPoint2().getX();
+        y2 = this.getPoint2().getY();
+
+        x3 = segment.getPoint1().getX();
+        y3 = segment.getPoint1().getY();
+        x4 = segment.getPoint2().getX();
+        y4 = segment.getPoint2().getY();
+
+        x = (int)(((x1*y2-x2*y1)*(x4-x3)-(x3*y4-x4*y3)*(x2-x1))/((y1-y2)*(x4-x3)-(y3-y4)*(x2-x1)) );
+        y = (int)(((y3-y4)*x-(x3*y4-x4*y3))/(x4-x3));
+
+        return new Point(x, y);
+    }
 }

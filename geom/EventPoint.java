@@ -22,13 +22,12 @@ public class EventPoint {
     }
 
 
-    public Point getIntersection() {
+    public Point getPoint() {
         return this.point;
     }
 
     public Type getType() {
         return this.type;
     }
-
 
 }

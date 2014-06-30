@@ -1,5 +1,7 @@
 package geom;
 
+import geom.Point;
+
 /**
  * Created with IntelliJ IDEA.
  * User: Lyange Dmitriy
@@ -20,7 +22,6 @@ public class EventPoint {
         this.point = point;
         this.type = type;
     }
-
 
     public Point getPoint() {
         return this.point;
